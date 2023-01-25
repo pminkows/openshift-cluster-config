@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.app.name }}-deployment
+spec:
+  replicas: {{ .Values.app.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.app.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.app.name }}
+    spec:
+      containers:
+      - name: {{ .Values.app.name }}
+        image: quay.io/{{ .Values.image.repository }}:{{ .Values.image.tag }}
+        ports:
+          - containerPort: 8080
+        env:
+          - name: PASS
+            value: {{ .Values.password }}
+        {{- if .Values.persistence.enabled }}
+        volumeMounts:
+          - mountPath: /app/vol
+            name: app-vol
+        {{- end }}
+      {{- if .Values.persistence.enabled }}
+      volumes:
+        - name: app-vol
+          persistentVolumeClaim:
+            claimName: {{ .Values.app.name }}-claim
+      {{- end }}
+#        volumeMounts:
+#        - mountPath: /app/vol
+#          name: app-vol
+#{{- if $.Values.persistence.enabled -}}
+#      volumes:
+#      - name: app-vol
+#        persistentVolumeClaim:
+#          claimName: {{ .Values.app.name }}-claim
+#{{- end }}

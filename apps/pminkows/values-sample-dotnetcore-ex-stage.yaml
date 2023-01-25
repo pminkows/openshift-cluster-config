@@ -1,0 +1,6 @@
+app:
+  name: sample-dotnetcore-ex
+  image: sample-dotnetcore-ex
+  version: "1.0"
+  replicas: 1
+  registry: quay.io/pminkows
